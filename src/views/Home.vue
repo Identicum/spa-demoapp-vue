@@ -52,6 +52,7 @@
          </v-list>
      </v-navigation-drawer>
     <v-main class="grey lighten-4">
+      <v-alert v-if="this.api.errorMessage" type="error">API error: {{this.api.errorMessage.statusText}} ({{this.api.errorMessage.status}})</v-alert>
       <v-progress-linear v-if="api.loading" :indeterminate="true" />
       <v-container
         fluid
@@ -127,7 +128,8 @@ export default {
     content : "products", // Default page
     api : {
       url : '/api/v1/products',
-      loading : false
+      loading : false,
+      errorMessage: ''
     },
     drawer: null
   }),
@@ -136,6 +138,7 @@ export default {
     {
         console.log("Calling service");
         this.api.loading = true;
+        this.api.errorMessage = null;
         axios.get(this.api.url).then((response) => {
           this.results = response.data;
           this.api.loading = false;
@@ -143,6 +146,7 @@ export default {
       }).catch( error => { 
         console.log(error); 
         this.api.loading = false;
+        this.api.errorMessage = error.response;
       });
     }
   },
