@@ -14,7 +14,3 @@ git clone git@github.com:https://github.com/Identicum/spa-demoapp-vue.git
 npm run serve
 ```
 You can access to the UI on http://hostname:8080/
-
-# Screenshots
-
-![App menu](src/assets/screenshot-home.png)
