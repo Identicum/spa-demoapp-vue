@@ -1,25 +1,20 @@
 # spa-demoapp-vue
+Public SPA demo app vue. The app makes the call to the endpoint ```/api/v1/products``` in order to get products.
 
-## Project setup
-```
-yarn install
-```
+# Installation
 
-### Compiles and hot-reloads for development
+Clone this repository
 ```
-yarn serve
+git clone git@github.com:https://github.com/Identicum/spa-demoapp-vue.git
 ```
 
-### Compiles and minifies for production
+# Configure and run
+1. Compile & run:
 ```
-yarn build
+npm run serve
 ```
+You can access to the UI on http://hostname:8080/
 
-### Lints and fixes files
-```
-yarn lint
-```
+# Screenshots
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
-# spa-demoapp-vue
+![App menu](src/assets/screenshot-home.png)
