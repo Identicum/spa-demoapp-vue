@@ -1,0 +1,46 @@
+env OIDC_DISCOVERY;
+env OIDC_CLIENT_ID;
+env OIDC_CLIENT_SECRET;
+env OIDC_SCOPE;
+env OIDC_REDIRECT_URI;
+env OIDC_SESSION_SECRET;
+
+error_log stderr $NGINX_LOG_LEVEL;
+
+events {
+	worker_connections 128;
+}
+
+http {
+	lua_package_path '/etc/ipax/lua/?.lua;;';
+	access_log  logs/access.log;
+
+	# cache for discovery metadata documents
+	lua_shared_dict discovery 1m;
+	# cache for JWKs
+	lua_shared_dict jwks 1m;
+	# cache for sessions storage
+	lua_shared_dict sessions 10m;
+
+	resolver 8.8.8.8;
+
+	server {
+		large_client_header_buffers 4 16k;
+
+		location / {
+			access_by_lua_block {
+				local user = require("ipax").get_user()
+			}
+			root /var/ipax/html;
+			index index.html;
+		}
+		location /api/ {
+			access_by_lua_block {
+				ngx.req.set_header("Authorization", "Bearer " .. require("ipax").get_access_token())
+			}
+			proxy_pass $API_URL;
+		}
+
+	}
+
+}
