@@ -21,7 +21,7 @@ services:
     environment:
       NGINX_RESOLVER: 127.0.0.11 valid=5s
       NGINX_LOG_LEVEL: debug
-      OIDC_DISCOVERY: http://host.docker.internal:8080/auth/realms/demorealm/.well-known/openid-configuration
+      OIDC_DISCOVERY: http://idp:8080/auth/realms/demorealm/.well-known/openid-configuration
       OIDC_CLIENT_ID: spa_client_id
       OIDC_CLIENT_SECRET: spa_client_secret
     ports:
@@ -32,6 +32,6 @@ services:
     environment:
       DEMOAPI_CLIENT_ID: api_client_id
       DEMOAPI_CLIENT_SECRET: api_client_secret
-      INTROSPECTION_ENDPOINT: http://host.docker.internal:8080/auth/realms/demorealm/protocol/openid-connect/token/introspect
+      INTROSPECTION_ENDPOINT: http://idp:8080/auth/realms/demorealm/protocol/openid-connect/token/introspect
     ports:
       - 8081:8081

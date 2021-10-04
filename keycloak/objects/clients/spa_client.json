@@ -9,7 +9,7 @@
 	"serviceAccountsEnabled": false,
 	"directAccessGrantsEnabled": false,
 	"redirectUris": [
-		"http://host.docker.internal/redirect_uri"
+		"http://spa/redirect_uri"
 	],
 	"defaultClientScopes": [ "profile", "api.identicum.com/product:read", "api.identicum.com/product:write" ],
 	"optionalClientScopes": [ ]
