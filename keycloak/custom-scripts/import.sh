@@ -16,6 +16,9 @@ for i in {1..10}; do
         for f in /opt/jboss/keycloak/objects/clients/*.json; do
             kcadm.sh create clients -r demorealm -f $f
         done
+        echo "Importing test user."
+        kcadm.sh create users -r demorealm -s username=demo -s enabled=true
+        kcadm.sh set-password -r demorealm --username demo --new-password demo
     else
         echo "the custom realm already exists."
         exit

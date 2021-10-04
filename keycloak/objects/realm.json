@@ -3,6 +3,5 @@
 	"realm": "demorealm",
 	"displayName": "demorealm",
 	"enabled": true,
-	"registrationAllowed": true,
-	"registrationEmailAsUsername": true
+	"registrationAllowed": true
 }
