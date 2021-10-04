@@ -14,7 +14,7 @@ services:
     ports:
       - 8080:8080
   spa:
-    image: identicum/spa-demoapp-vue
+    image: identicum/spa-demoapp-vue:latest
     restart: always
     volumes:
       - ./nginx/conf/server.conf:/usr/local/openresty/nginx/conf/server.conf
