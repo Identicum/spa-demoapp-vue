@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  idp:
+    image: jboss/keycloak:15.0.2
+    restart: always
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+    volumes:
+      - ./keycloak/startup-scripts/:/opt/jboss/startup-scripts/
+      - ./keycloak/custom-scripts/:/opt/jboss/custom-scripts/
+      - ./keycloak/objects/:/opt/jboss/keycloak/objects/
+    ports:
+      - 8080:8080
+  spa:
+    image: identicum/spa-demoapp-vue:latest
+    restart: always
+    volumes:
+      - ./nginx/conf/server.conf:/usr/local/openresty/nginx/conf/server.conf
+    environment:
+      NGINX_RESOLVER: 127.0.0.11 valid=5s
+      NGINX_LOG_LEVEL: debug
+      OIDC_DISCOVERY: http://host.docker.internal:8080/auth/realms/demorealm/.well-known/openid-configuration
+      OIDC_CLIENT_ID: spa_client_id
+      OIDC_CLIENT_SECRET: spa_client_secret
+    ports:
+      - 80:80
+  api:
+    image: identicum/oauth-demoapi-spring:latest
+    restart: always
+    environment:
+      DEMOAPI_CLIENT_ID: api_client_id
+      DEMOAPI_CLIENT_SECRET: api_client_secret
+      INTROSPECTION_ENDPOINT: http://host.docker.internal:8080/auth/realms/demorealm/protocol/openid-connect/token/introspect
+    ports:
+      - 8081:8081

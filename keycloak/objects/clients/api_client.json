@@ -1,0 +1,13 @@
+{
+	"clientId": "api_client_id",
+	"name": "api_client",
+	"description": "api_client",
+	"secret": "api_client_secret",
+	"publicClient": false,
+	"standardFlowEnabled": false,
+	"implicitFlowEnabled": false,
+	"serviceAccountsEnabled": true,
+	"directAccessGrantsEnabled": false,
+	"defaultClientScopes": [ "profile", "api.identicum.com/product:read", "api.identicum.com/product:write" ],
+	"optionalClientScopes": [ ]
+}

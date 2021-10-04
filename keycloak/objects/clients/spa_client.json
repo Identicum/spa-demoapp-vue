@@ -1,0 +1,16 @@
+{
+	"clientId": "spa_client_id",
+	"name": "spa_client",
+	"description": "spa_client",
+	"secret": "spa_client_secret",
+	"publicClient": false,
+	"standardFlowEnabled": true,
+	"implicitFlowEnabled": false,
+	"serviceAccountsEnabled": false,
+	"directAccessGrantsEnabled": false,
+	"redirectUris": [
+		"http://host.docker.internal/redirect_uri"
+	],
+	"defaultClientScopes": [ "profile", "api.identicum.com/product:read", "api.identicum.com/product:write" ],
+	"optionalClientScopes": [ ]
+}
