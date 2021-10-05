@@ -1,0 +1,19 @@
+title spa-demoapp-vue
+
+actor Browser
+
+Browser->SPA: GET /
+SPA->SPA: Check lua-resty-openidc session
+SPA->Browser: redirect to authorization_endpoint
+Browser->IDP: /auth
+IDP->Browser: Prompt credentials
+Browser->IDP: Submit credentials
+IDP->IDP: Create authenticated session
+IDP->Browser: redirect to /redirect_uri
+Browser->SPA: /redirect_uri
+SPA->SPA: Create authenticated session
+SPA->Browser: Set cookie + return /index.html
+Browser->SPA: GET /api/v1/products (with cookie)
+SPA->API: GET /api/v1/products (with access_token)
+API->SPA: return JSON
+SPA->Browser: return JSON

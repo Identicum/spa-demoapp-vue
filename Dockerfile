@@ -1,8 +1,8 @@
 FROM node:12.14.1-alpine as build-stage
 WORKDIR /app
-COPY package*.json ./
+COPY spa/package*.json ./
 RUN npm install
-COPY . .
+COPY spa/ .
 RUN npm run build
 
 
