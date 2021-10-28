@@ -5,6 +5,5 @@ RUN npm install
 COPY spa/ .
 RUN npm run build
 
-
 FROM identicum/ipax:latest
 COPY --from=build-stage /app/dist /var/ipax/html
