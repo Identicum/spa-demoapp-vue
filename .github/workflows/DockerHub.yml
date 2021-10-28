@@ -8,14 +8,13 @@ on:
 env:
   CONTAINER_IMAGE: identicum/${{github.event.repository.name}}:latest
 jobs:
- analyze:
+  analyze:
     name: Analyze
     runs-on: ubuntu-latest
     permissions:
       actions: read
       contents: read
       security-events: write
-
     strategy:
       fail-fast: false
       matrix:
