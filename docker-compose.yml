@@ -2,7 +2,7 @@ version: '3'
 
 services:
   idp:
-    image: jboss/keycloak:15.0.2
+    image: quay.io/keycloak/keycloak:19.0.3-legacy
     restart: always
     environment:
       KEYCLOAK_USER: admin
@@ -14,7 +14,7 @@ services:
     ports:
       - 8080:8080
   spa:
-    image: identicum/spa-demoapp-vue:latest
+    image: ghcr.io/identicum/spa-demoapp-vue:latest
     restart: always
     volumes:
       - ./nginx/conf/server.conf:/usr/local/openresty/nginx/conf/server.conf
@@ -27,7 +27,7 @@ services:
     ports:
       - 80:80
   api:
-    image: identicum/oauth-demoapi-spring:latest
+    image: ghcr.io/identicum/oauth-demoapi-spring:latest
     restart: always
     environment:
       DEMOAPI_CLIENT_ID: api_client_id
