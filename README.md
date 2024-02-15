@@ -3,7 +3,7 @@
 Public SPA demo app using VueJS.
 The app makes the call to the endpoint ```/api/v1/products``` in order to get products.
 
-:::mermaid
+```mermaid
 sequenceDiagram
 
 actor Browser
@@ -23,7 +23,7 @@ Browser->SPA: GET /api/v1/products (with cookie)
 SPA->API: GET /api/v1/products (with access_token)
 API->SPA: return JSON
 SPA->Browser: return JSON
-:::
+```
 
 ## Test environment
 
