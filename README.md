@@ -3,11 +3,27 @@
 Public SPA demo app using VueJS.
 The app makes the call to the endpoint ```/api/v1/products``` in order to get products.
 
-## Clone repo
+:::mermaid
+sequenceDiagram
 
-```sh
-git clone git@github.com:https://github.com/Identicum/spa-demoapp-vue.git
-```
+actor Browser
+
+Browser->SPA: GET /
+SPA->SPA: Check lua-resty-openidc session
+SPA->Browser: redirect to authorization_endpoint
+Browser->IDP: /auth
+IDP->Browser: Prompt credentials
+Browser->IDP: Submit credentials
+IDP->IDP: Create authenticated session
+IDP->Browser: redirect to /redirect_uri
+Browser->SPA: /redirect_uri
+SPA->SPA: Create authenticated session
+SPA->Browser: Set cookie + return /index.html
+Browser->SPA: GET /api/v1/products (with cookie)
+SPA->API: GET /api/v1/products (with access_token)
+API->SPA: return JSON
+SPA->Browser: return JSON
+:::
 
 ## Test environment
 
@@ -21,13 +37,5 @@ To be able to use this environment, you need to add this line to your local HOST
 ```
 To access the SPA in the environment go to this URL: <http://spa/>
 
-To see a reference of the architecture and diagrams, check [the docs](./docs/).
-
-## Configure and run
-
-Compile & run:
-```sh
-npm run serve
-```
-You can access the UI on <http://hostname:8080/>
+To see a reference of the architecture, check [the docs](./docs/).
 
