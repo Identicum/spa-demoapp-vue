@@ -21,17 +21,6 @@
       @click="loadProducts"
     />
     <v-spacer />
-    <div
-      v-if="user && smAndUp"
-      class="d-flex align-center"
-    >
-      <v-icon
-        icon="mdi-account-circle"
-        color="grey-lighten-3"
-        size="large"
-      />
-      <span class="ml-2 mr-2">{{ user.preferred_username }}</span>
-    </div>
     <v-btn
       icon="mdi-logout"
       title="Logout"
@@ -49,11 +38,6 @@
         prepend-icon="mdi-view-dashboard"
         title="Product Catalog"
         active
-      />
-      <v-list-item
-        prepend-icon="mdi-key-chain"
-        title="Session & tokens"
-        href="/private/info"
       />
     </v-list>
   </v-navigation-drawer>
@@ -132,7 +116,6 @@ const search = ref('')
 const products = ref([])
 const loading = ref(false)
 const errorMessage = ref('')
-const user = ref(null)
 
 const filteredProducts = computed(() => {
   const term = (search.value || '').trim().toLowerCase()
@@ -152,24 +135,17 @@ async function loadProducts () {
     products.value = response.data
   } catch (error) {
     const response = error.response
+    // IPAx answers 401 on /api/ when the session expired: reload to log in again.
+    // A 401 from the API itself carries WWW-Authenticate, reloading wouldn't fix it.
+    if (response?.status === 401 && !response.headers['www-authenticate']) {
+      window.location.reload()
+      return
+    }
     errorMessage.value = response ? `${response.statusText} (${response.status})` : error.message
   } finally {
     loading.value = false
   }
 }
 
-// Claims of the logged in user, exposed by the IPAx gateway (see nginx/spa.conf)
-async function loadUser () {
-  try {
-    const response = await axios.get('/userinfo')
-    user.value = response.data
-  } catch {
-    user.value = null
-  }
-}
-
-onMounted(() => {
-  loadUser()
-  loadProducts()
-})
+onMounted(loadProducts)
 </script>

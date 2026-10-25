@@ -25,18 +25,13 @@ services:
     image: ghcr.io/identicum/spa-demoapp-vue:latest
     build: .
     restart: always
-    volumes:
-      - ./nginx/spa.conf:/var/ipax/proxy_conf.d/spa.conf:ro
     environment:
       NGINX_RESOLVER: 127.0.0.11 valid=5s
       NGINX_LOG_LEVEL: info
-      IPAX_APP_NAME: spa
-      IPAX_DISPLAY_NAME: Store Online
       IPAX_BASE_URL: http://spa
       OIDC_DISCOVERY: http://idp:8080/realms/demorealm/.well-known/openid-configuration
       OIDC_CLIENT_ID: spa_client_id
       OIDC_CLIENT_SECRET: spa_client_secret
-      OIDC_USE_PKCE: "true"
       API_BASE_URL: http://api:8080
     ports:
       - 127.0.0.1:80:80
