@@ -24,7 +24,7 @@ flowchart LR
 | Service | Image | Role |
 |---------|-------|------|
 | `idp` | `ghcr.io/identicum/keycloak` | OpenID Provider. Imports the `demorealm` realm from [keycloak/realm.json](./keycloak/realm.json) |
-| `spa` | `ghcr.io/identicum/spa-demoapp-vue` (this repo) | IPAx serving the Vue build. The virtual host is in [nginx/spa.conf](./nginx/spa.conf) |
+| `spa` | `ghcr.io/identicum/spa-demoapp-vue` (this repo) | IPAx in `spa` mode, serving the Vue build |
 | `api` | `ghcr.io/identicum/oauth-demoapi-spring` | Resource server. Validates the JWT and requires the `api.identicum.com/products:read` scope |
 
 ### Login sequence
@@ -72,7 +72,6 @@ Requirements: Docker with Compose v2.
 | URL | Description |
 |-----|-------------|
 | <http://spa/> | The SPA |
-| <http://spa/private/info> | IPAx info page: ID token, access token, userinfo and HTTP headers |
 | <http://spa/private/logout> | Logout (IdP session included) |
 | <http://idp:8080/admin/> | Keycloak admin console (`admin` / `admin`) |
 
@@ -102,10 +101,24 @@ npm run lint     # ESLint
 npm run build    # production build in spa/dist
 ```
 
-The dev server only serves the UI. `/api` and `/userinfo` are provided by IPAx, so to test the full flow, build the image with `docker compose up -d --build`.
+The dev server only serves the UI. `/api` is provided by IPAx, so to test the full flow, build the image with `docker compose up -d --build`.
 
 ## Container image
 
-The [Dockerfile](./Dockerfile) builds the SPA with Node.js and copies `dist/` to `/var/ipax/html` of the IPAx image.
+The [Dockerfile](./Dockerfile) builds the SPA with Node.js and copies `dist/` to `/var/ipax/html` of the IPAx image. It runs IPAx in `spa` mode, which:
+
+- serves `/var/ipax/html` to authenticated users and redirects anonymous users to the IdP
+- proxies `/api/` to `API_BASE_URL` with the access token as `Bearer`, and answers `401` when there is no session. The SPA then reloads the page to log in again.
+- handles `/private/redirect_uri`, `/private/logout` and `/logoutSuccess`
+
+The image sets the generic settings (`IPAX_MODE`, `IPAX_APP_NAME`, `IPAX_DISPLAY_NAME`, `OIDC_USE_PKCE`). Each environment sets the rest:
+
+| Variable | Example |
+|----------|---------|
+| `IPAX_BASE_URL` | `http://spa` |
+| `OIDC_DISCOVERY` | `http://idp:8080/realms/demorealm/.well-known/openid-configuration` |
+| `OIDC_CLIENT_ID` / `OIDC_CLIENT_SECRET` | `spa_client_id` / `spa_client_secret` |
+| `API_BASE_URL` | `http://api:8080` (no path) |
+| `NGINX_RESOLVER` | `127.0.0.11 valid=5s` (Docker DNS) |
 
 The [docker-build workflow](./.github/workflows/docker-build.yml) uses the shared [Identicum/github-actions](https://github.com/Identicum/github-actions) `docker-build-autotag` workflow. On every push to `main` that changes `spa/` or the `Dockerfile`, it publishes `ghcr.io/identicum/spa-demoapp-vue` for `linux/amd64` and `linux/arm64`, tagged `latest` and with the build date (`YYYYMMDD`). It can also be run manually.
