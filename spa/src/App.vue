@@ -1,16 +1,9 @@
 <template>
-  <div id="app">
-    <Home/>
-  </div>
+  <v-app>
+    <HomeView />
+  </v-app>
 </template>
 
-<script>
-import Home from './views/Home.vue'
-
-export default {
-  name: 'App',
-  components: {
-    Home
-  }
-}
+<script setup>
+import HomeView from './views/HomeView.vue'
 </script>

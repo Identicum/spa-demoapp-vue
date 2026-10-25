@@ -1,7 +1,7 @@
-FROM node:12.14.1-alpine as build-stage
+FROM node:24-alpine AS build-stage
 WORKDIR /app
 COPY spa/package*.json ./
-RUN npm install
+RUN npm ci
 COPY spa/ .
 RUN npm run build
 

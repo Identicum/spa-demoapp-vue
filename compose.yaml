@@ -1,0 +1,60 @@
+name: spa-demoapp-vue
+
+services:
+  idp:
+    container_name: idp
+    image: ghcr.io/identicum/keycloak:26.8
+    restart: always
+    pull_policy: always
+    ports:
+      - 127.0.0.1:8080:8080
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    volumes:
+      - ./keycloak/:/opt/keycloak/data/import/
+    command: "start-dev --import-realm"
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:9000/health/ready"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  spa:
+    container_name: spa
+    image: ghcr.io/identicum/spa-demoapp-vue:latest
+    build: .
+    restart: always
+    volumes:
+      - ./nginx/spa.conf:/var/ipax/proxy_conf.d/spa.conf:ro
+    environment:
+      NGINX_RESOLVER: 127.0.0.11 valid=5s
+      NGINX_LOG_LEVEL: info
+      IPAX_APP_NAME: spa
+      IPAX_DISPLAY_NAME: Store Online
+      IPAX_BASE_URL: http://spa
+      OIDC_DISCOVERY: http://idp:8080/realms/demorealm/.well-known/openid-configuration
+      OIDC_CLIENT_ID: spa_client_id
+      OIDC_CLIENT_SECRET: spa_client_secret
+      OIDC_USE_PKCE: "true"
+      API_BASE_URL: http://api:8080
+    ports:
+      - 127.0.0.1:80:80
+    depends_on:
+      idp:
+        condition: service_healthy
+      api:
+        condition: service_started
+
+  api:
+    container_name: api
+    image: ghcr.io/identicum/oauth-demoapi-spring:latest
+    restart: always
+    depends_on:
+      idp:
+        condition: service_healthy
+    environment:
+      # JWT access tokens are validated locally against the issuer's JWKS
+      ISSUER_URI: http://idp:8080/realms/demorealm
+    ports:
+      - 127.0.0.1:8081:8080
